@@ -9,7 +9,6 @@ import { ModeToggle } from "./ThemeToggle";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { Menu, X, Sparkles } from "lucide-react";
-import Image from "next/image";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -57,9 +56,9 @@ export default function Navbar() {
             transition={{ duration: 0.5 }}
             className="flex items-center gap-x-2"
           >
-            <img src="/inkwiselogo.svg" alt="" className="w-[36px] h-[36px]" />
+            <img src="/inkwiselogo.svg" alt="Inkwise Logo" className="w-[36px] h-[36px]" />
             <span className="font-bold text-xl text-primary hidden sm:inline-block">
-              InkWise AI
+              InkWise AI 
             </span>
           </motion.div>
         </Link>

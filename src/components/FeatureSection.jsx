@@ -340,7 +340,7 @@ export default function FeaturesSection() {
                 { value: "99%", label: "Satisfaction Rate" },
               ].map((stat, index) => (
                 <div key={index} className="bg-background rounded-xl p-6 border shadow-sm">
-                  <div className="text-3xl font-bold text-primary">{stat.value}</div>
+                  <div className="text-3xl max-md:text-xl font-bold text-primary">{stat.value}</div>
                   <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
                 </div>
               ))}

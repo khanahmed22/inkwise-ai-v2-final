@@ -613,7 +613,7 @@ export default function BlogMakerClient() {
                         disabled={publishing || !name || !description || !blogContent || !slug}
                       >
                         <Send className="w-4 h-4 mr-2" />
-                        {publishing ? "Publishing..." : "Publish Blog"}
+                        {publishing ? "Publishing..." : "Publish Blog To Gallery"}
                       </Button>
                     </div>
                   </form>

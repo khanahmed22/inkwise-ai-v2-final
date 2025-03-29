@@ -1,99 +1,151 @@
-"use client"
+"use client";
 
-import { useState, useMemo, useEffect } from "react"
-import useSWR from "swr"
-import { useSession, useUser } from "@clerk/nextjs"
-import getSupabaseClient from "@/app/utils/supabase"
-import { useRouter, useParams } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import parse from "html-react-parser"
-import { slugify } from "@/app/utils/slugify"
-import { Facebook, Linkedin, Twitter, ArrowLeft, Share2, Calendar, User } from "lucide-react"
-import { motion } from "framer-motion"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { useSupabaseData } from "@/app/utils/SupabaseContext"
+import { useState, useMemo, useEffect,useRef } from "react";
+import useSWR from "swr";
+import { useSession, useUser } from "@clerk/nextjs";
+import getSupabaseClient from "@/app/utils/supabase";
+import { useRouter, useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import parse from "html-react-parser";
+import { slugify } from "@/app/utils/slugify";
+import { usePathname } from "next/navigation";
+import { toast } from "sonner";
 
-import { Separator } from "@/components/ui/separator"
+import {
+  Copy,
+  ArrowLeft,
+  Share2,
+  Calendar,
+} from "lucide-react";
+import { motion } from "framer-motion";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { useSupabaseData } from "@/app/utils/SupabaseContext";
 
-import { Skeleton } from "@/components/ui/skeleton"
-import { useCompletion } from "ai/react"
+import { Separator } from "@/components/ui/separator";
+
+import { Skeleton } from "@/components/ui/skeleton";
+import { useCompletion } from "ai/react";
+
+import { WhatsappShareButton, WhatsappIcon } from "next-share";
+
+import { TwitterShareButton, TwitterIcon } from "next-share";
+
+import { FacebookShareButton, FacebookIcon } from "next-share";
 
 export default function PublicBlogPage() {
-  const [name, setName] = useState("")
-  const [description, setDescription] = useState("")
-  const [blogContent, setBlogContent] = useState("")
-  const [fileURL, setFileURL] = useState("")
-  const [authorEmail, setAuthorEmail] = useState("")
-  const [authorAvatar, setAuthorAvatar] = useState("")
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [blogContent, setBlogContent] = useState("");
+  const [fileURL, setFileURL] = useState("");
+  const [authorEmail, setAuthorEmail] = useState("");
+  const [authorAvatar, setAuthorAvatar] = useState("");
 
-  const router = useRouter()
-  const { blogId: id } = useParams()
-  const { user } = useUser()
-  const { session } = useSession()
+  const router = useRouter();
+  const { blogId: id } = useParams();
+  const { user } = useUser();
+  const { session } = useSession();
 
   //const email = user?.primaryEmailAddress?.emailAddress || "";
-  const [actionType, setActionType] = useState(null)
+  const [actionType, setActionType] = useState(null);
   const authorName = user?.firstName;
 
-  const { countData, setCountData } = useSupabaseData()
-  const [currentCount, setCurrentCount] = useState(countData[0]?.count || 0)
-  const [slug, setNewSlug] = useState(slugify(name))
+  const { countData, setCountData } = useSupabaseData();
+  const [currentCount, setCurrentCount] = useState(countData[0]?.count || 0);
+  const [slug, setNewSlug] = useState(slugify(name));
+  const pathname = usePathname()
+  const allowCopy = useRef(false); // Ref to allow copy action
+
+  function copyUrl() {
+    allowCopy.current = true; // Allow the copy action
+    const el = document.createElement('input');
+    el.value = window.location.href;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    allowCopy.current = false; // Reset the flag
+    toast.success('Copied To Clipboard');
+  }
 
   useEffect(() => {
-    setCurrentCount(countData[0]?.count || 0)
-  }, [countData])
+    setCurrentCount(countData[0]?.count || 0);
+  }, [countData]);
 
   const { complete, completion } = useCompletion({
     api:
       actionType === "paraphrase"
         ? "/api/rephrase"
         : actionType === "summarize"
-          ? "/api/summarize"
-          : actionType === "spellcheck"
-            ? "/api/spellchecker"
-            : actionType === "generateBlog"
-              ? "/api/generateBlog"
-              : "",
+        ? "/api/summarize"
+        : actionType === "spellcheck"
+        ? "/api/spellchecker"
+        : actionType === "generateBlog"
+        ? "/api/generateBlog"
+        : "",
     body: { text: blogContent },
-  })
+  });
 
   const {
     data: blog,
     mutate,
     isLoading: isBlogLoading,
     error: blogError,
-  } = useSWR(user && id ? ["slug", id] : null, async () => {
-    const clerkToken = await session?.getToken({ template: "supabase" })
-    const client = getSupabaseClient(clerkToken)
-    const { data, error } = await client.from("all_tasks").select().eq("slug", id).single()
-    if (error) throw error
-    return data
-  })
+  } = useSWR(id ? ["slug", id] : null, async () => {
+    if (user) {
+      const clerkToken = await session?.getToken({ template: "supabase" });
+      const client = clerkToken
+        ? getSupabaseClient(clerkToken)
+        : getSupabaseClient();
+      const { data, error } = await client
+        .from("all_tasks")
+        .select()
+        .eq("slug", id)
+        .single();
+      if (error) throw error;
+      return data;
+    } else {
+      // Fetch without authentication
+      const client = getSupabaseClient();
+      const { data, error } = await client
+        .from("all_tasks")
+        .select()
+        .eq("slug", id)
+        .single();
+      if (error) throw error;
+      return data;
+    }
+  });
 
   useMemo(() => {
     if (blog) {
-      setName(blog.name)
-      setDescription(blog.description)
-      setBlogContent(blog.blogContent)
-      setFileURL(blog.fileURL)
-      setAuthorEmail(blog.email)
-      setAuthorAvatar(blog.authorAvatar)
+      setName(blog.name);
+      setDescription(blog.description);
+      setBlogContent(blog.blogContent);
+      setFileURL(blog.fileURL);
+      setAuthorEmail(blog.email);
+      setAuthorAvatar(blog.authorAvatar);
     }
-  }, [blog])
+  }, [blog]);
 
   const formatDate = (dateString) => {
-    if (!dateString) return "Unknown date"
-    const date = new Date(dateString)
+    if (!dateString) return "Unknown date";
+    const date = new Date(dateString);
     return new Intl.DateTimeFormat("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
-    }).format(date)
-  }
+    }).format(date);
+  };
 
   useEffect(() => {
-    setNewSlug(slugify(name))
-  }, [name])
+    setNewSlug(slugify(name));
+  }, [name]);
 
   // Loading skeleton for the blog view
   if (isBlogLoading) {
@@ -150,7 +202,7 @@ export default function PublicBlogPage() {
           </Card>
         </div>
       </div>
-    )
+    );
   }
 
   // Error state
@@ -159,14 +211,18 @@ export default function PublicBlogPage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle className="text-xl text-destructive">Error Loading Blog</CardTitle>
+            <CardTitle className="text-xl text-destructive">
+              Error Loading Blog
+            </CardTitle>
             <CardDescription>
-              We couldn&apos;t load the blog post you requested. It may have been deleted or you may not have permission to
-              view it.
+              We couldn&apos;t load the blog post you requested. It may have
+              been deleted or you may not have permission to view it.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
-            <p className="text-sm text-muted-foreground">Error details: {blogError.message || "Unknown error"}</p>
+            <p className="text-sm text-muted-foreground">
+              Error details: {blogError.message || "Unknown error"}
+            </p>
             <Button onClick={() => router.push("/gallery")}>
               <ArrowLeft className="mr-2 h-4 w-4" />
               Return to Gallery
@@ -174,42 +230,59 @@ export default function PublicBlogPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   if (true) {
     // View Mode
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background px-2">
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="mb-6">
-            <Button variant="ghost" size="sm" className="mb-4" onClick={() => router.push("/gallery")}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="mb-4"
+              onClick={() => router.push("/gallery")}
+            >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Gallery
             </Button>
 
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h1 className="text-3xl font-bold tracking-tight md:text-4xl mb-2">{name}</h1>
+                <h1 className="text-3xl font-bold tracking-tight md:text-4xl mb-2">
+                  {name}
+                </h1>
                 <p className="text-muted-foreground text-lg">{description}</p>
 
-                <div className="flex items-center mt-4 text-sm text-muted-foreground">
+                <div className="flex  items-center max-md:gap-x-5 mt-4 text-sm text-muted-foreground">
                   {blog?.created_at && (
                     <div className="flex items-center mr-4">
                       <Calendar className="mr-1 h-4 w-4" />
-                      <span>{formatDate(blog.created_at)}</span>
+                      <span className="max-md:text-sm">
+                        {formatDate(blog.created_at)}
+                      </span>
                     </div>
                   )}
                   {authorEmail && (
-                    <div className="flex items-center">
-                      <img src={authorAvatar} className="w-7 rounded-3xl mr-2"/>
+                    <div className="flex max-md:flex-col items-center">
+                      
+                      <img
+                        src={authorAvatar || "/placeholder.svg"}
+                        className="w-7 rounded-3xl mr-2"
+                      />
                       <span>{authorName}</span>
                       <Button
                         variant="link"
-                        className="ml-2 p-0 h-auto text-sm text-primary"
-                        onClick={() => router.push(`/gallery/author/${encodeURIComponent(authorEmail)}`)}
+                        className="ml-1 p-0 h-auto text-sm text-primary"
+                        onClick={() =>
+                          router.push(
+                            `/gallery/author/${encodeURIComponent(authorEmail)}`
+                          )
+                        }
                       >
-                        View profile
+                        View Author Profile
                       </Button>
                     </div>
                   )}
@@ -228,7 +301,9 @@ export default function PublicBlogPage() {
             </div>
           )}
 
-          <div className="prose prose-lg max-w-none dark:prose-invert mb-12">{parse(blogContent)}</div>
+          <div className="prose prose-lg max-w-none dark:prose-invert mb-12">
+            {parse(blogContent)}
+          </div>
 
           <Separator className="my-8" />
 
@@ -236,26 +311,48 @@ export default function PublicBlogPage() {
             <CardHeader>
               <CardTitle className="text-lg flex items-center">
                 <Share2 className="mr-2 h-5 w-5" />
-                Share this article
+                Share this article with the world
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-center gap-4">
-                <Button variant="outline" size="icon" className="rounded-full h-10 w-10" aria-label="Share on Facebook">
-                  <Facebook className="h-5 w-5" />
-                </Button>
-                <Button variant="outline" size="icon" className="rounded-full h-10 w-10" aria-label="Share on LinkedIn">
-                  <Linkedin className="h-5 w-5" />
-                </Button>
-                <Button variant="outline" size="icon" className="rounded-full h-10 w-10" aria-label="Share on Twitter">
-                  <Twitter className="h-5 w-5" />
-                </Button>
+                <FacebookShareButton
+                  url={`https://inkwise-ai-v2-final-8859k4w5g-khanahmed22s-projects.vercel.app/${pathname}`}
+                  
+                  hashtag={"#happyblogging"}
+                >
+                  <FacebookIcon size={32} round />
+                </FacebookShareButton>
+
+                <TwitterShareButton
+                  url={`https://inkwise-ai-v2-final-8859k4w5g-khanahmed22s-projects.vercel.app/${pathname}`}
+                  title={
+                    "next-share is a social share buttons for your next React apps."
+                  }
+                >
+                  <TwitterIcon size={32} round />
+                </TwitterShareButton>
+                <WhatsappShareButton
+                  url={`https://inkwise-ai-v2-final-8859k4w5g-khanahmed22s-projects.vercel.app/${pathname}`}
+                  title={
+                    "next-share is a social share buttons for your next React apps."
+                  }
+                  separator=":: "
+                >
+                  <WhatsappIcon size={32} round />
+
+                  
+                </WhatsappShareButton>
+
+                <Copy className="cursor-pointer " onClick={copyUrl}/>
+
+               
               </div>
             </CardContent>
           </Card>
         </div>
       </div>
-    )
+    );
   } else {
     if (isBlogLoading) {
       return (
@@ -330,8 +427,7 @@ export default function PublicBlogPage() {
             </div>
           </div>
         </motion.div>
-      )
+      );
     }
   }
 }
-

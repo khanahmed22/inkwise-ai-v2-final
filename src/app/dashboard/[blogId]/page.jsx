@@ -14,12 +14,9 @@ import { slugify } from "@/app/utils/slugify"
 import {
   Sparkles,
   ChevronLeft,
-  Facebook,
-  Linkedin,
   Pencil,
   Save,
   Trash,
-  Twitter,
   ImageUp,
   FileText,
   Wand2,
@@ -29,6 +26,7 @@ import {
   Calendar,
   User,
   Loader2,
+  Copy
 } from "lucide-react"
 import { motion } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -50,6 +48,12 @@ import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { WhatsappShareButton, WhatsappIcon } from "next-share";
+
+import { TwitterShareButton, TwitterIcon } from "next-share";
+
+import { FacebookShareButton, FacebookIcon } from "next-share";
+import { usePathname } from "next/navigation"
 
 export default function BlogPage() {
   const [name, setName] = useState("")
@@ -80,6 +84,20 @@ export default function BlogPage() {
   const [generatingImage, setGeneratingImage] = useState(false)
   const [imageError, setImageError] = useState(null)
   const [genre, setGenre] = useState("")
+  const pathname = usePathname()
+  const allowCopy = useRef(false); // Ref to allow copy action
+
+  function copyUrl() {
+    allowCopy.current = true; // Allow the copy action
+    const el = document.createElement('input');
+    el.value = window.location.href;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    allowCopy.current = false; // Reset the flag
+    toast.success('Copied To Clipboard');
+  }
 
   useEffect(() => {
     setCurrentCount(countData[0]?.count || 0)
@@ -517,7 +535,7 @@ export default function BlogPage() {
   if (!editMode) {
     // View Mode
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background px-2">
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="mb-6">
             <Button variant="ghost" size="sm" className="mb-4" onClick={() => router.push("/dashboard")}>
@@ -543,12 +561,7 @@ export default function BlogPage() {
                       <span>{formatDate(blog.created_at)}</span>
                     </div>
                   )}
-                  {email && (
-                    <div className="flex items-center">
-                      <User className="mr-1 h-4 w-4" />
-                      <span>{email}</span>
-                    </div>
-                  )}
+                  
                 </div>
               </div>
 
@@ -602,21 +615,43 @@ export default function BlogPage() {
             <CardHeader>
               <CardTitle className="text-lg flex items-center">
                 <Share2 className="mr-2 h-5 w-5" />
-                Share this article
+                Share this article with yourself
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-center gap-4">
-                <Button variant="outline" size="icon" className="rounded-full h-10 w-10" aria-label="Share on Facebook">
-                  <Facebook className="h-5 w-5" />
-                </Button>
-                <Button variant="outline" size="icon" className="rounded-full h-10 w-10" aria-label="Share on LinkedIn">
-                  <Linkedin className="h-5 w-5" />
-                </Button>
-                <Button variant="outline" size="icon" className="rounded-full h-10 w-10" aria-label="Share on Twitter">
-                  <Twitter className="h-5 w-5" />
-                </Button>
-              </div>
+                              <FacebookShareButton
+                                url={`https://inkwise-ai-v2-final-8859k4w5g-khanahmed22s-projects.vercel.app/${pathname}`}
+                                
+                                hashtag={"#happyblogging"}
+                              >
+                                <FacebookIcon size={32} round />
+                              </FacebookShareButton>
+              
+                              <TwitterShareButton
+                                url={`https://inkwise-ai-v2-final-8859k4w5g-khanahmed22s-projects.vercel.app/${pathname}`}
+                                title={
+                                  "next-share is a social share buttons for your next React apps."
+                                }
+                              >
+                                <TwitterIcon size={32} round />
+                              </TwitterShareButton>
+                              <WhatsappShareButton
+                                url={`https://inkwise-ai-v2-final-8859k4w5g-khanahmed22s-projects.vercel.app/${pathname}`}
+                                title={
+                                  "next-share is a social share buttons for your next React apps."
+                                }
+                                separator=":: "
+                              >
+                                <WhatsappIcon size={32} round />
+              
+                                
+                              </WhatsappShareButton>
+              
+                              <Copy className="cursor-pointer " onClick={copyUrl}/>
+              
+                             
+                            </div>
             </CardContent>
           </Card>
         </div>

@@ -148,21 +148,30 @@ export default function Dashboard() {
 
   return (
     <>
-      <div className="mt-16 min-h-screen bg-background px-4 py-8 md:px-8 lg:px-12">
+      <div className="mt-16 min-h-screen bg-background px-5 py-8 md:px-8 lg:px-12 ">
         <div className="max-w-7xl mx-auto">
           {/* Header Section */}
-          <p className="mb-6 flex items-center">
+          <p className="mb-6 flex items-center max-md:text-lg max-md:flex-col">
             Welcome Back
-            <span className="ml-2 font-bold text-xl bg-gradient-to-tr from-rose-600 to-red-500 bg-clip-text text-transparent">
+            <span className="max-md:text-lg ml-2 font-bold text-xl bg-gradient-to-tr from-rose-600 to-red-500 bg-clip-text text-transparent">
               {user?.firstName} {user?.lastName}!
             </span>
           </p>
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+          <div className="flex flex-col md:flex-row justify-between max-md:justify-center max-md:items-center items-start md:items-center mb-8">
             <div>
-              <h1 className="text-3xl font-bold  md:text-4xl">
-                Your Blog Collection
-              </h1>
-              <p className="text-muted-foreground mt-1">
+              <div className="flex items-center gap-x-3">
+                <h1 className="text-3xl font-bold  md:text-4xl max-md:text-lg">
+                  Your Blog Collection
+                
+                </h1>
+
+                
+                <Badge variant="outline">Private</Badge>
+                  
+
+              </div>
+              
+              <p className="text-muted-foreground mt-1 max-md:text-sm">
                 Manage and explore your creative content
               </p>
             </div>
@@ -177,7 +186,10 @@ export default function Dashboard() {
               ) : (
                 <>
                   <Plus className="mr-2 h-4 w-4 transition-transform group-hover:rotate-90" />
+                  <span className="hidden">
                   Create New Blog
+                  </span>
+                  
                 </>
               )}
             </Button>
@@ -198,9 +210,9 @@ export default function Dashboard() {
               <div className="flex gap-2">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="h-12">
+                    <Button variant="outline" className="h-12 ">
                       <Filter className="mr-2 h-4 w-4" />
-                      Sort
+                      <span className="max-md:hidden">Sort</span>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
@@ -274,7 +286,7 @@ export default function Dashboard() {
               </p>
               <Button
                 size="lg"
-                className="mt-4 md:mt-0 group"
+                className="mt-4 md:mt-0 group max-md:sm"
                 onClick={handleCreateButton}
                 disabled={loading}
               >
@@ -293,7 +305,7 @@ export default function Dashboard() {
           {/* Content - Grid View */}
           {!isLoading && sortedTasks.length > 0 && viewMode === "grid" && (
             <Tabs defaultValue="all" className="w-full">
-              <div className="flex justify-between items-center mb-6">
+              <div className="flex max-md:flex-col max-md:gap-y-3 justify-between items-center mb-6">
                 <TabsList>
                   <TabsTrigger value="all">All Blogs</TabsTrigger>
                   <TabsTrigger value="recent">Recently Updated</TabsTrigger>

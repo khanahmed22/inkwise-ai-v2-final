@@ -113,6 +113,9 @@ export default function HeroSection() {
   if (!mounted) return null
 
   return (
+    <div className="px-3">
+
+    
     <div className="relative overflow-hidden bg-background">
       {/* Background Elements */}
       <div className="absolute inset-0 z-0">
@@ -275,6 +278,7 @@ export default function HeroSection() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   )
 }
