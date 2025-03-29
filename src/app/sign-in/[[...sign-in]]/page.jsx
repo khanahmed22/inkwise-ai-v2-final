@@ -17,7 +17,7 @@ export default function SignInPage() {
   if (!mounted) return null;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col px-2">
       {/* Background Elements */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl opacity-60"></div>
@@ -62,7 +62,7 @@ export default function SignInPage() {
             </div>
           </div>
 
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-3xl md:text-4xl max-md:text-2xl font-bold mb-4">
             Welcome back to your{" "}
             <span className="text-primary">creative journey</span>
           </h2>
@@ -117,7 +117,7 @@ export default function SignInPage() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="w-full max-w-md"
         >
-          <div className="bg-card border rounded-xl shadow-sm p-4 md:p-6">
+          <div className="flex items-center justify-center p-4 md:p-6 ">
             <SignIn />
           </div>
 
