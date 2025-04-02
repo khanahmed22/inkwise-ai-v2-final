@@ -17,7 +17,7 @@ import { Badge } from "@/components/ui/badge"
 import { slugify } from "@/app/utils/slugify"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-// Dynamically import JoditEditor with SSR disabled
+
 const JoditEditor = dynamic(() => import("jodit-react"), {
   ssr: false,
   loading: () => (
@@ -58,7 +58,7 @@ export default function BlogMakerClient() {
 
   const [loading, setloading] = useState(false)
 
-  // Create separate completion hooks for each AI action type
+
   const {
     complete: completeParaphrase,
     completion: paraphraseCompletion,
@@ -95,7 +95,7 @@ export default function BlogMakerClient() {
     body: { text: blogContent },
   })
 
-  // Combined loading state for UI
+  
   const aiLoading = paraphraseLoading || summarizeLoading || spellcheckLoading || generateBlogLoading
 
   useEffect(() => {
@@ -113,12 +113,12 @@ export default function BlogMakerClient() {
     loadTasks()
   }, [user, session])
 
-  // Update slug when name changes
+ 
   useEffect(() => {
     setSlug(slugify(name))
   }, [name])
 
-  // Handle completions from different AI actions
+
   useEffect(() => {
     if (paraphraseCompletion) {
       setBlogContent(paraphraseCompletion)
@@ -175,7 +175,7 @@ export default function BlogMakerClient() {
         )
         setEditingTaskId(null)
       } else {
-        // Create the blog post data object
+       
         const blogData = {
           name,
           email,
@@ -188,12 +188,11 @@ export default function BlogMakerClient() {
           genre,
         }
 
-        // Insert into tasks table
+   
         const { data, error } = await client.from("tasks").insert(blogData).select()
 
         if (error) throw error
 
-        // Also insert the same data into all_tasks table
         const { error: allTasksError } = await client.from("all_tasks").insert(blogData)
 
         if (allTasksError) {
@@ -293,33 +292,31 @@ export default function BlogMakerClient() {
     try {
       setUploading(true)
 
-      // Fetch the image as a blob
+      
       const response = await fetch(imageSrc)
       const blob = await response.blob()
 
-      // Create a file from the blob
       const fileName = `ai-generated-${Math.random()}.png`
       const aiGeneratedFile = new File([blob], fileName, { type: "image/png" })
 
-      // Get Supabase client
+
       const clerkToken = await session?.getToken({ template: "supabase" })
       const client = getSupabaseClient(clerkToken)
 
-      // Upload to Supabase
       const { data, error } = await client.storage.from("images").upload(fileName, aiGeneratedFile)
 
       if (error) {
         throw error
       }
 
-      // Get public URL
+     
       const { data: publicUrlData, error: urlError } = client.storage.from("images").getPublicUrl(fileName)
 
       if (urlError) {
         throw urlError
       }
 
-      // Update the fileURL state
+    
       setFileURL(publicUrlData.publicUrl)
       toast.success("AI-generated image uploaded successfully")
     } catch (error) {
@@ -359,7 +356,7 @@ export default function BlogMakerClient() {
 
     await updateCountInSupabase(newCount)
 
-    // Call the appropriate complete function based on action type
+    
     switch (type) {
       case "paraphrase":
         completeParaphrase(blogContent)

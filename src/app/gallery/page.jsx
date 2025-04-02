@@ -50,23 +50,23 @@ export default function GalleryPage() {
 
     mutate,
   } = useSWR(
-    "all_tasks", // Always fetch data, not conditional on user
+    "all_tasks", 
     async () => {
       if (user) {
         const clerkToken = await session?.getToken({ template: "supabase" })
         return await fetchTasks(clerkToken)
       } else {
-        // Fetch without authentication
+        
         return await fetchTasks(null)
       }
     },
     { revalidateOnFocus: false },
   )
 
-  // Set dataReady to true when data is loaded
+
   useEffect(() => {
     if (all_tasks && !isLoading) {
-      // Add a small delay to ensure UI transitions smoothly
+   
       const timer = setTimeout(() => {
         setDataReady(true)
       }, 300)
@@ -78,21 +78,21 @@ export default function GalleryPage() {
 
   function handleViewBlog(slug) {
     setLoading(true)
-    // Find the specific blog post with the matching slug
+   
     const blogPost = all_tasks.find((task) => task.slug === slug)
 
     if (blogPost) {
-      // Extract email from the specific blog post
+     
       const email = blogPost.email
       const id = blogPost.id
       router.push(`/gallery/${email}/${slug}`)
     } else {
-      // Fallback if blog post not found
+  
       router.push(`/gallery/${slug}`)
     }
   }
 
-  // Get unique genres from all tasks
+
   const uniqueGenres = useMemo(() => {
     if (!all_tasks) return []
 
@@ -104,7 +104,7 @@ export default function GalleryPage() {
     return genres
   }, [all_tasks])
 
-  // Filter and sort tasks
+
   const filteredTasks = useMemo(() => {
     if (!all_tasks) return []
 
@@ -134,7 +134,7 @@ export default function GalleryPage() {
     })
   }, [filteredTasks, sortBy])
 
-  // Format date
+  
   const formatDate = (dateString) => {
     if (!dateString) return ""
     const date = new Date(dateString)
@@ -145,7 +145,7 @@ export default function GalleryPage() {
     }).format(date)
   }
 
-  // Animation variants
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {

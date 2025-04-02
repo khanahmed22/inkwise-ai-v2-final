@@ -29,13 +29,13 @@ export default function Footer() {
 
     setIsSubscribing(true)
 
-    // Simulate API call
+
     setTimeout(() => {
       setIsSubscribing(false)
       setSubscribed(true)
       setEmail("")
 
-      // Reset success message after 3 seconds
+     
       setTimeout(() => setSubscribed(false), 3000)
     }, 1500)
   }

@@ -44,22 +44,15 @@ export default function ContactForm() {
     setIsSubmitting(true)
 
     try {
-      // In a real implementation, you would send the form data and turnstileToken to your API
-      // const response = await fetch('/api/contact', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ ...formState, turnstileToken }),
-      // });
-
-      // Simulate API call
+      
       await new Promise((resolve) => setTimeout(resolve, 1500))
 
-      // if (!response.ok) throw new Error('Failed to send message');
+     
 
       setIsSubmitted(true)
       toast.success("Your message has been sent successfully!")
 
-      // Reset form
+     
       setFormState({
         name: "",
         email: "",
@@ -67,7 +60,7 @@ export default function ContactForm() {
         message: "",
       })
 
-      // Reset Turnstile
+      
       setTurnstileToken(null)
     } catch (error) {
       toast.error("Failed to send message. Please try again.")

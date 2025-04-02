@@ -53,7 +53,7 @@ export default function HeroSection() {
     },
   ]
 
-  // Simulated typing effect text options
+
   const typingTexts = ["engaging blog posts", "compelling stories", "professional articles", "creative content"]
 
   const [typingIndex, setTypingIndex] = useState(0)
@@ -89,12 +89,12 @@ export default function HeroSection() {
     return () => clearTimeout(timeout)
   }, [displayText, isDeleting, typingIndex, typingSpeed, mounted])
 
-  // Simulate loading states for demo purposes
+ 
   const handleStartCreating = (e) => {
     e.preventDefault()
     setIsCreating(true)
 
-    // Simulate API call or navigation delay
+   
     setTimeout(() => {
       window.location.href = "/createBlog"
     }, 2000)
@@ -104,7 +104,7 @@ export default function HeroSection() {
     e.preventDefault()
     setIsLoading(true)
 
-    // Simulate API call or navigation delay
+  
     setTimeout(() => {
       window.location.href = "/dashboard"
     }, 2000)

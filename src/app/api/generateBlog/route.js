@@ -5,7 +5,7 @@ const google = createGoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
-// Function to strip HTML tags
+
 const stripHtml = (html) => {
   if (!html || typeof html !== 'string') return '';
   return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
@@ -15,14 +15,14 @@ export async function POST(req) {
   try {
     const { text } = await req.json();
     
-    // Strip HTML tags before processing
+   
     const plainText = stripHtml(text);
     
-    // Log the cleaned text for debugging
+   
     console.log('Received text length:', text?.length);
     console.log('Cleaned text length:', plainText?.length);
     
-    // Ensure we have text to process
+  
     if (!plainText || plainText.trim() === '') {
       return new Response('No text provided', { status: 400 });
     }

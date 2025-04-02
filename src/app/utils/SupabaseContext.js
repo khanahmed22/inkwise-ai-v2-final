@@ -1,6 +1,4 @@
-// supabase-context.js
-"use client"; // This makes the component a client-side component
-
+"use client"; 
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useUser, useSession } from '@clerk/nextjs';
 import getSupabaseClient from './supabase';
