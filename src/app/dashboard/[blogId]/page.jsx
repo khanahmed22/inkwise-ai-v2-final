@@ -79,7 +79,7 @@ export default function BlogPage() {
   const { countData, setCountData } = useSupabaseData()
   const [currentCount, setCurrentCount] = useState(countData[0]?.count || 0)
 
-  const [prompt, setPrompt] = useState("adorable pig")
+  const [prompt, setPrompt] = useState("")
   const [imageSrc, setImageSrc] = useState(null)
   const [generatingImage, setGeneratingImage] = useState(false)
   const [imageError, setImageError] = useState(null)
