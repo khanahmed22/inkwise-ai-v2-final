@@ -85,17 +85,17 @@ export default function BlogPage() {
   const [imageError, setImageError] = useState(null)
   const [genre, setGenre] = useState("")
   const pathname = usePathname()
-  const allowCopy = useRef(false); // Ref to allow copy action
+  const allowCopy = useRef(false); 
 
   function copyUrl() {
-    allowCopy.current = true; // Allow the copy action
+    allowCopy.current = true; 
     const el = document.createElement('input');
     el.value = window.location.href;
     document.body.appendChild(el);
     el.select();
     document.execCommand('copy');
     document.body.removeChild(el);
-    allowCopy.current = false; // Reset the flag
+    allowCopy.current = false; 
     toast.success('Copied To Clipboard');
   }
 
@@ -149,7 +149,7 @@ export default function BlogPage() {
     const client = getSupabaseClient(clerkToken)
 
     try {
-      // Delete from both tables
+   
       await client.from("tasks").delete().eq("slug", id)
       await client.from("all_tasks").delete().eq("slug", id)
 
@@ -218,19 +218,19 @@ export default function BlogPage() {
     try {
       setUploading(true)
 
-      // Fetch the image as a blob
+   
       const response = await fetch(imageSrc)
       const blob = await response.blob()
 
-      // Create a file from the blob
+
       const fileName = `ai-generated-${Math.random()}.png`
       const aiGeneratedFile = new File([blob], fileName, { type: "image/png" })
 
-      // Get Supabase client
+
       const clerkToken = await session?.getToken({ template: "supabase" })
       const client = getSupabaseClient(clerkToken)
 
-      // Delete existing file if there is one
+     
       if (existingFilePath) {
         const { error: deleteError } = await client.storage.from("images").remove([existingFilePath])
         if (deleteError) {
@@ -238,21 +238,20 @@ export default function BlogPage() {
         }
       }
 
-      // Upload to Supabase
+   
       const { data, error } = await client.storage.from("images").upload(fileName, aiGeneratedFile)
 
       if (error) {
         throw error
       }
 
-      // Get public URL
       const { data: publicUrlData, error: urlError } = client.storage.from("images").getPublicUrl(fileName)
 
       if (urlError) {
         throw urlError
       }
 
-      // Update the fileURL state and set the existing file path
+    
       setFileURL(publicUrlData.publicUrl)
       setExistingFilePath(fileName)
 
@@ -271,7 +270,7 @@ export default function BlogPage() {
 
     try {
       if (id) {
-        // Update the tasks table
+      
         await client
           .from("tasks")
           .update({
@@ -284,7 +283,7 @@ export default function BlogPage() {
           })
           .eq("slug", id)
 
-        // Also update the all_tasks table with the same data
+        
         await client
           .from("all_tasks")
           .update({
@@ -297,7 +296,7 @@ export default function BlogPage() {
           })
           .eq("slug", id)
       } else {
-        // For new blog posts, insert into both tables
+     
         const blogData = {
           name,
           email,
@@ -316,7 +315,6 @@ export default function BlogPage() {
       toast.success("Blog saved successfully")
       setEditMode(false)
 
-      // If this is a new blog or the slug changed, redirect to the new URL
       if (!id || id !== slug) {
         router.push(`/blog/${slug}`)
       }
@@ -450,7 +448,6 @@ export default function BlogPage() {
     }
   }
 
-  // Loading skeleton for the blog view
   if (isBlogLoading && !editMode) {
     return (
       <div className="min-h-screen bg-background">
@@ -508,7 +505,7 @@ export default function BlogPage() {
     )
   }
 
-  // Error state
+
   if (blogError) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -533,7 +530,7 @@ export default function BlogPage() {
   }
 
   if (!editMode) {
-    // View Mode
+  
     return (
       <div className="min-h-screen bg-background px-2">
         <div className="max-w-4xl mx-auto px-4 py-8">
@@ -658,7 +655,7 @@ export default function BlogPage() {
       </div>
     )
   } else {
-    // Edit Mode - Loading skeleton for edit mode
+   
     if (isBlogLoading) {
       return (
         <motion.div
@@ -735,7 +732,7 @@ export default function BlogPage() {
       )
     }
 
-    // Edit Mode
+    
     return (
       <motion.div
         initial={{ opacity: 0 }}
