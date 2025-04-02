@@ -51,7 +51,7 @@ export default function PublicBlogPage() {
   const { user } = useUser();
   const { session } = useSession();
 
-  //const email = user?.primaryEmailAddress?.emailAddress || "";
+ 
   const [actionType, setActionType] = useState(null);
   const authorName = user?.firstName;
 
@@ -59,17 +59,17 @@ export default function PublicBlogPage() {
   const [currentCount, setCurrentCount] = useState(countData[0]?.count || 0);
   const [slug, setNewSlug] = useState(slugify(name));
   const pathname = usePathname()
-  const allowCopy = useRef(false); // Ref to allow copy action
+  const allowCopy = useRef(false); 
 
   function copyUrl() {
-    allowCopy.current = true; // Allow the copy action
+    allowCopy.current = true; 
     const el = document.createElement('input');
     el.value = window.location.href;
     document.body.appendChild(el);
     el.select();
     document.execCommand('copy');
     document.body.removeChild(el);
-    allowCopy.current = false; // Reset the flag
+    allowCopy.current = false; 
     toast.success('Copied To Clipboard');
   }
 
@@ -110,7 +110,7 @@ export default function PublicBlogPage() {
       if (error) throw error;
       return data;
     } else {
-      // Fetch without authentication
+     
       const client = getSupabaseClient();
       const { data, error } = await client
         .from("all_tasks")
@@ -147,7 +147,7 @@ export default function PublicBlogPage() {
     setNewSlug(slugify(name));
   }, [name]);
 
-  // Loading skeleton for the blog view
+ 
   if (isBlogLoading) {
     return (
       <div className="min-h-screen bg-background">
@@ -205,7 +205,7 @@ export default function PublicBlogPage() {
     );
   }
 
-  // Error state
+
   if (blogError) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -234,7 +234,7 @@ export default function PublicBlogPage() {
   }
 
   if (true) {
-    // View Mode
+    
     return (
       <div className="min-h-screen bg-background px-2">
         <div className="max-w-4xl mx-auto px-4 py-8">
