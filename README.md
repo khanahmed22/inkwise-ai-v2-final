@@ -51,7 +51,7 @@ For the Featured Image Section you can upload your own image or generate with AI
 - **Supabase** for Backend 💾
 - **Gemini** for AI usage ✨
 
-## Visit Inkwise Ai'S website now!
+## Visit Inkwise AI website now!
 
 🌐 https://inkwise-ai.vercel.app
 
