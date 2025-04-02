@@ -317,7 +317,7 @@ export default function PublicBlogPage() {
             <CardContent>
               <div className="flex items-center justify-center gap-4">
                 <FacebookShareButton
-                  url={`https://inkwise-ai-v2-final-8859k4w5g-khanahmed22s-projects.vercel.app/${pathname}`}
+                  url={`https://inkwise-ai.vercel.app/${pathname}`}
                   
                   hashtag={"#happyblogging"}
                 >
@@ -325,7 +325,7 @@ export default function PublicBlogPage() {
                 </FacebookShareButton>
 
                 <TwitterShareButton
-                  url={`https://inkwise-ai-v2-final-8859k4w5g-khanahmed22s-projects.vercel.app/${pathname}`}
+                  url={`https://inkwise-ai.vercel.app/${pathname}`}
                   title={
                     "next-share is a social share buttons for your next React apps."
                   }
@@ -333,7 +333,7 @@ export default function PublicBlogPage() {
                   <TwitterIcon size={32} round />
                 </TwitterShareButton>
                 <WhatsappShareButton
-                  url={`https://inkwise-ai-v2-final-8859k4w5g-khanahmed22s-projects.vercel.app/${pathname}`}
+                  url={`https://inkwise-ai.vercel.app/${pathname}`}
                   title={
                     "next-share is a social share buttons for your next React apps."
                   }
